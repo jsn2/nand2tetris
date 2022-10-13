@@ -1,0 +1,157 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Math.jack
+
+/**
+ * A library of commonly used mathematical functions.
+ * Note: Jack compilers implement multiplication and division using OS method calls.
+ */
+class Math {
+    static Array twoToThe;
+    static int temp;
+
+    /** Initializes the library. */
+    function void init() {
+        var int a, i;
+
+        let twoToThe = Array.new(16);
+        let a = 1;
+        let i = 0;
+        while (i < 16) {
+            let twoToThe[i] = a;
+            let a = a + a;
+            let i = i + 1;
+        }
+        return;
+    }
+
+    // Returns true if the i-th bit of x is 1, false otherwise.
+    function boolean bit(int x, int i) {
+        return (x & twoToThe[i]);
+    }
+
+    /** Returns the absolute value of x. */
+    function int abs(int x) {
+        if (x < 0) {
+            return -x;
+        }
+        return x;
+    }
+
+    /** Returns the product of x and y. 
+     *  When a Jack compiler detects the multiplication operator '*' in the 
+     *  program's code, it handles it by invoking this method. In other words,
+     *  the Jack expressions x*y and multiply(x,y) return the same value.
+     */
+    function int multiply(int x, int y) {
+        var int sum, i;
+
+        let sum = 0;
+        let i = 0;
+        while (i < 16) {
+            if (Math.bit(y, i)) {
+                let sum = sum + x;
+            }
+            let x = x + x;
+            let i = i + 1;
+        }
+        return sum;
+    }
+
+    /** Returns the integer part of x/y.
+     *  When a Jack compiler detects the multiplication operator '/' in the 
+     *  program's code, it handles it by invoking this method. In other words,
+     *  the Jack expressions x/y and divide(x,y) return the same value.
+     */
+    /*function int divide(int x, int y) {
+        var int q, result;
+        var boolean sign;
+
+        let sign = (((x > (-1)) & (y > (-1))) | ((x < 0) & (y < 0)));
+        let x = Math.abs(x);
+        let y = Math.abs(y);
+
+        if ((y > x) | (y < 0)) {
+            return 0;
+        }
+        let q = Math.divide(x, y + y);
+        if ((x - ((q + q) * y)) < y) {
+            let result =  q + q;
+        }
+        else {
+            let result = (q + q) + 1;
+        }
+
+        if (sign) {
+            return result;
+        }
+        else {
+            return -result;
+        }
+    }*/
+    /** More efficient divide (without multiplication).
+     *  temp is used so that divide can 'return' 2 values: q, yq.
+     */
+    function int divide(int x, int y) {
+        var int q, result;
+        var boolean sign;
+
+        let sign = (((x > (-1)) & (y > (-1))) | ((x < 0) & (y < 0)));
+        let x = Math.abs(x);
+        let y = Math.abs(y);
+
+        if ((y > x) | (y < 0)) {
+            let temp = 0;
+            return 0;
+        }
+        let q = Math.divide(x, y + y);
+        if ((x - temp) < y) {
+            let result =  q + q;
+        }
+        else {
+            let temp = temp + y;
+            let result = (q + q) + 1;
+        }
+        if (sign) {
+            return result;
+        }
+        return -result;
+    }
+
+    /** Returns the integer part of the square root of x. */
+    function int sqrt(int x) {
+        var int y, j, a, aSquared;
+
+        let j = 7;
+        while (j > -1) {
+            let a = (y + twoToThe[j]);
+            let aSquared = a * a;
+            if  (((aSquared < x) | (aSquared = x)) & (aSquared > 0)) {
+                let y = a;
+            }
+            let j = j - 1;
+        }
+        return y;
+    }
+
+    /** Returns the greater number. */
+    function int max(int a, int b) {
+        if (a > b) {
+            return a;
+        }
+        else {
+            return b;
+        }
+    }
+
+    /** Returns the smaller number. */
+    function int min(int a, int b) {
+        if (a < b) {
+            return a;
+        }
+        else {
+            return b;
+        }
+    }
+}

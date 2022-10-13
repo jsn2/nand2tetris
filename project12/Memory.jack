@@ -1,0 +1,95 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Memory.jack
+
+/**
+ * This library provides two services: direct access to the computer's main
+ * memory (RAM), and allocation and recycling of memory blocks. The Hack RAM
+ * consists of 32,768 words, each holding a 16-bit binary number.
+ */ 
+class Memory {
+
+    static Array ram;
+    static Array freeList;
+
+    /** Initializes the class. */
+    function void init() {
+        let ram = 0;
+        let freeList = 2048;
+        let freeList[0] = 0; // Pointer to next item in linked list.
+        let freeList[1] = 14334; // Size of data segment (size of heap - 2).
+        return;
+    }
+
+    /** Returns the RAM value at the given address. */
+    function int peek(int address) {
+        return ram[address];
+    }
+
+    /** Sets the RAM value at the given address to the given value. */
+    function void poke(int address, int value) {
+        let ram[address] = value;
+        return;
+    }
+
+    /** Finds an available RAM block of the given size and returns
+     *  a reference to its base address. */
+    function int alloc(int size) {
+        var Array list, prev, prevBestFit, bestFit;
+        var boolean foundBestFit;
+
+        let list = freeList;
+        let foundBestFit = false;
+
+        // Find the best fitting free segment from the linked list.
+        while (~((list = 0) | foundBestFit)) {
+            if (list[1] > (size - 1)) {
+                if (bestFit) {
+                    if (list[1] < bestFit[1]) {
+                        let prevBestFit = prev;
+                        let bestFit = list;
+                    }
+                }
+                else {
+                    let prevBestFit = prev;
+                    let bestFit = list;
+                }
+                let foundBestFit = (bestFit[1] = size);
+            }
+            let prev = list;
+            let list = list[0];
+        }
+
+        // Return 0 if no available memory found.
+        if (bestFit = 0) {
+            return 0;
+        }
+
+        // If 'condition' then just return this segment (don't carve a new segment out of bestFit);
+        if ((bestFit[1] - size) < 3) {
+            if (prevBestFit) {
+                let prevBestFit[0] = bestFit[0];
+            }
+            else {
+                let freeList = bestFit[0];
+            }
+            return bestFit + 2;
+        }
+
+        // Carve a new segment out of bestFit.
+        let prev = (bestFit + bestFit[1] + 1) - (size + 1);
+        let bestFit[1] = bestFit[1] - (size + 2);
+        let prev[1] = size;
+        return prev + 2;
+    }
+
+    /** De-allocates the given object (cast as an array) by making
+     *  it available for future allocations. */
+    function void deAlloc(Array o) {
+        let o = o - 2;
+        let o[0] = freeList;
+        let freeList = o;
+        return;
+    }    
+}
