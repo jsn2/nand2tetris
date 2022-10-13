@@ -1,0 +1,94 @@
+/** This class represents a 32x32 pixel sprite (which looks like a tile when drawn on the screen). */
+class Tile {
+    field int _number;
+    field int _position;
+    field int _x;
+    field int _y;
+    field Array _leftSprite;
+    field Array _rightSprite;
+
+    constructor Tile new(int number, int position, Array leftSprite, Array rightSprite) {
+        let _number = number;
+        let _position = position;
+        let _leftSprite = leftSprite;
+        let _rightSprite = rightSprite;
+
+        return this;
+    }
+
+    method int getNumber() {
+        return _number;
+    }
+
+    method int getX() {
+        return _x;
+    }
+
+    method int getY() {
+        return _y;
+    }
+
+    method int getPosition() {
+        return _position;
+    }
+
+    method void setPosition(int position) {
+        let _position = position;
+
+        return;
+    }
+
+    /** Draws the tile at (x, y). */
+    method void draw(int x, int y) {
+        let _x = x;
+        let _y = y;
+
+        do SpriteDrawer.draw(_leftSprite, _x, _y);
+        do SpriteDrawer.draw(_rightSprite, _x + 16, _y);
+
+        return;
+    }
+
+    /** Replaces tile with a 32x32 pixel black rectangle. */
+    method void erase() {
+        do Screen.setColor(true);
+        do Screen.drawRectangle(_x, _y, _x + 32, _y + 32);
+
+        return;
+    }
+    
+    /**
+    Moves tile the specified amount of pixels in the specified direction (with animation).
+    direction: 0 = up, 1 = down, 2 = left, 3 = right.
+    */
+    method void move(int direction, int distance, int animationSpeed) {
+        while (~(distance = 0)) {
+            if (direction = 0) {
+                let _y = _y - 1;
+            }
+            if (direction = 1) {
+                let _y = _y + 1;
+            }
+            if (direction = 2) {
+                let _x = _x - 1;
+            }
+            if (direction = 3) {
+                let _x = _x + 1;
+            }
+            do SpriteDrawer.draw(_leftSprite, _x, _y);
+            do SpriteDrawer.draw(_rightSprite, _x + 16, _y);
+            let distance = distance - 1;
+            do Sys.wait(animationSpeed);
+        }
+
+        return;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(_leftSprite);
+        do Memory.deAlloc(_rightSprite);
+        do Memory.deAlloc(this);
+        
+        return;
+    }
+}

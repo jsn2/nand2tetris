@@ -1,0 +1,341 @@
+/** This class represents the sliding puzzle game. */
+class PuzzleGame {
+    field boolean _isSolved;
+    field int _gameNumber;
+    field int _moveCount;
+    field int _animationSpeed;
+    field Array _gamePositions;
+    field Array _tiles;
+
+    constructor PuzzleGame new() {
+        let _isSolved = true;
+        let _gameNumber = 2;
+        let _animationSpeed = 25;
+        let _gamePositions = Array.new(24);
+        let _tiles = Array.new(9);
+
+        // Tile positions for game 0.
+        let _gamePositions[0] =  6;    let _gamePositions[1] =  3;    let _gamePositions[2] = 7;
+        let _gamePositions[3] =  8;    let _gamePositions[4] =  1;    let _gamePositions[5] = 4;
+        let _gamePositions[6] =  2;    let _gamePositions[7] =  5;
+
+        // Tile positions for game 1.
+        let _gamePositions[8] =  6;    let _gamePositions[9] =  7;    let _gamePositions[10] = 4;
+        let _gamePositions[11] = 8;    let _gamePositions[12] = 3;    let _gamePositions[13] = 2;
+        let _gamePositions[14] = 5;    let _gamePositions[15] = 1;
+
+        // Tile positions for game 2.
+        let _gamePositions[16] = 5;    let _gamePositions[17] = 4;    let _gamePositions[18] = 8;
+        let _gamePositions[19] = 2;    let _gamePositions[20] = 7;    let _gamePositions[21] = 1;
+        let _gamePositions[22] = 3;    let _gamePositions[23] = 6;
+
+        let _tiles[0] = Tile.new(1, 1, Sprites.getOneLeftHalf(),   Sprites.getOneRightHalf());
+        let _tiles[1] = Tile.new(2, 2, Sprites.getTwoLeftHalf(),   Sprites.getTwoRightHalf());
+        let _tiles[2] = Tile.new(3, 3, Sprites.getThreeLeftHalf(), Sprites.getThreeRightHalf());
+        let _tiles[3] = Tile.new(4, 4, Sprites.getFourLeftHalf(),  Sprites.getFourRightHalf());
+        let _tiles[4] = Tile.new(5, 5, Sprites.getFiveLeftHalf(),  Sprites.getFiveRightHalf());
+        let _tiles[5] = Tile.new(6, 6, Sprites.getSixLeftHalf(),   Sprites.getSixRightHalf());
+        let _tiles[6] = Tile.new(7, 7, Sprites.getSevenLeftHalf(), Sprites.getSevenRightHalf());
+        let _tiles[7] = Tile.new(8, 8, Sprites.getEightLeftHalf(), Sprites.getEightRightHalf());
+        // tile[8] stores the position of the empty space in the puzzle.
+        let _tiles[8] = 9;
+
+        do SpriteDrawer.init();
+
+        return this;
+    }
+
+    /** Displays the title of the puzzle game at (col, row). */
+    method void displayTitle(int col, int row) {
+        do Output.moveCursor(row, col);
+        do Utils.print("Puzzle Game");
+
+        return;
+    }
+
+    /** Displays the move count at (col, row). */
+    method void displayMoves(int col, int row) {
+        do Output.moveCursor(row, col);
+        do Utils.print("Moves: ");
+        do Output.printInt(_moveCount);
+
+        return;
+    }
+
+    /** Displays the instructions of the game at (col, row). */
+    method void displayInstructions(int col, int row) {
+        do Output.moveCursor(row, col);
+        do Utils.print("Instructions");
+        let row = row + 2;
+
+        do Output.moveCursor(row, col);
+        do Utils.print("Arrange the tiles in ascending");
+        let row = row + 1;
+
+        do Output.moveCursor(row, col);
+        do Utils.print("order from left to right,");
+        let row = row + 1;
+
+        do Output.moveCursor(row, col);
+        do Utils.print("top to bottom to");
+        let row = row + 1;
+
+        do Output.moveCursor(row, col);
+        do Utils.print("win the game!");
+
+        return;
+    }
+
+    /** Displays the control instructions of the game at (col, row). */
+    method void displayControls(int col, int row) {
+        do Output.moveCursor(row, col);
+        do Utils.print("Controls");
+        let row = row + 2;
+
+        do Output.moveCursor(row, col);
+        do Utils.print("Q = quit");
+        let row = row + 1;
+
+        do Output.moveCursor(row, col);
+        do Utils.print("S = shuffle puzzle");
+        let row = row + 1;
+
+        do Output.moveCursor(row, col);
+        do Utils.print("Arrow keys = move tiles");
+        let row = row + 1;
+
+        return;
+    }
+
+    /** Displays the win message at (col, row) if 'show' is true, otherwise hides the message. */
+    method void displayWinMessage(int col, int row, boolean show) {
+        if (show) {
+            do Output.moveCursor(row, col);
+            do Utils.print("Congratulations!!!");
+            let col = col - 5;
+            let row = row + 2;
+
+            do Output.moveCursor(row, col);
+            do Utils.print("You solved the puzzle in");
+            let col = col + 9;
+            let row = row + 1;
+
+            do Output.moveCursor(row, col);
+            do Output.printInt(_moveCount);
+            do Utils.print(" moves!");
+        }
+        else {
+            let col = (col - 5) * 8;
+            let row = row * 11;
+            do Screen.setColor(false);
+            do Screen.drawRectangle(col, row, col + 200, row + 45);
+        }
+
+        return;
+    }
+
+    /** Displays a 4 pixel high horizontal line from (x, y) to the right edge of the screen. */
+    method void displayHorizontalDivider(int x, int y, boolean colour) {
+        do Screen.setColor(colour);
+        do Screen.drawRectangle(x, y, 511, y + 4);
+
+        return;
+    }
+
+    /** Displays a 4 pixel wide vertical line from (x, y) to the bottom edge of the screen. */
+    method void displayVerticalDivider(int x, int y, boolean colour) {
+        do Screen.setColor(colour);
+        do Screen.drawRectangle(x, y, x + 4, 255);
+
+        return;
+    }
+
+    /** Draws the puzzle on the screen at (x, y). */
+    method void displayPuzzle(int x, int y) {
+        var Tile tile;
+        var int i;
+
+        // Draw the puzzle background as a black rectangle.
+        do Screen.setColor(true);
+        do Screen.drawRectangle(x, y, x + 136, y + 136);
+
+        let x = x + 10;
+        let y = y + 10;
+        let i = 0;
+
+        // Draw each of the tiles over the puzzle background.
+        while (i < 8) {
+            if ((i = 3) | (i = 6)) {
+                let x = x - 126;
+                let y = y + 42;
+            }
+
+            let tile = _tiles[i];
+            do tile.draw(x, y);
+
+            let x = x + 42;
+            let i = i + 1;
+        }
+
+        return;
+    }
+
+    /** Shuffles the tiles of the puzzle. */
+    method void shuffle() {
+        var Tile tile;
+        var int targetPosition;
+        var int x;
+        var int y;
+        var int i;
+
+        // Reset the move count and set the empty space to position 9 (bottom right).
+        let _moveCount = 0;
+        let _tiles[8] = 9;
+        
+        // Increment game number.
+        if (_gameNumber = 2) {
+            let _gameNumber = 0;
+        }
+        else {
+            let _gameNumber = _gameNumber + 1;
+        }
+
+        // Move each tile to the position specified in _gamePositions.
+        let i = 0;
+        while (i < 8) {
+            let tile = _tiles[i];
+            let targetPosition = _gamePositions[(8 * _gameNumber) + i];
+            let x = tile.getX();
+            let y = tile.getY();
+
+            if (tile.getPosition() = 9) {
+                do tile.erase();
+            }
+
+            // Move tile 1 row up while it is in a lower row than the target position.
+            while ( ((targetPosition < 4) & (tile.getPosition() > 3)) | ((targetPosition < 7) & (tile.getPosition() > 6)) ) {
+                do tile.setPosition(tile.getPosition() - 3);
+                let y = y - 42;
+            }
+            // Move tile 1 row down while it is in a higher row than the target position.
+            while ( ((targetPosition > 6) & (tile.getPosition() < 7)) | ((targetPosition > 3) & (tile.getPosition() < 4)) ) {
+                do tile.setPosition(tile.getPosition() + 3);
+                let y = y + 42;
+            }
+            // Move tile 1 column left while it is in a column to the right of the target position.
+            while (targetPosition < tile.getPosition()) {
+                do tile.setPosition(tile.getPosition() - 1);
+                let x = x - 42;
+            }
+            // Move tile 1 column right while it is in a column to the left of the target position.
+            while (targetPosition > tile.getPosition()) {
+                do tile.setPosition(tile.getPosition() + 1);
+                let x = x + 42;
+            }
+
+            do tile.draw(x, y);
+            let i = i + 1;
+        }
+
+        do setSolved();
+
+        return;
+    }
+
+    /**
+    Moves a tile in specified direction. (direction: 0 = up, 1 = down, 2 = left, 3 = right).
+    Returns true if a tile was moved.
+    */
+    method boolean move(int direction) {
+        var Tile tile;
+        var int posOfSpace;
+        var int offset;
+        var int i;
+
+        // Get position of the empty space.
+        let posOfSpace = _tiles[8];
+
+        // Set if the offset if the move is legal.
+        if ((direction = 0) & (posOfSpace < 7)) {
+            let offset = 3;
+        }
+        if ((direction = 1) & (posOfSpace > 3)) {
+            let offset = -3;
+        }
+        if ( (direction = 2) & ( (~(posOfSpace = 3)) & (~(posOfSpace = 6)) & (~(posOfSpace = 9)) ) ) {
+            let offset = 1;
+        }
+        if ( (direction = 3) & ( (~(posOfSpace = 1)) & (~(posOfSpace = 4)) & (~(posOfSpace = 7)) ) ) {
+            let offset = -1;
+        }
+
+        // Abort if the offset is invalid (i.e. the move is illegal).
+        if (offset = 0) {
+            return false;
+        }
+
+        // Set new position of empty space.
+        let posOfSpace = posOfSpace + offset;
+        let _tiles[8] = posOfSpace;
+
+        // Find tile to move (tile with position = posOfSpace).
+        let i = 0;
+        let tile = _tiles[i];
+        while (~(tile.getPosition() = posOfSpace)) {
+            let i = i + 1;
+            let tile = _tiles[i];
+        }
+
+        // Move tile to new position.
+        do tile.setPosition(tile.getPosition() + (-offset));
+        do tile.move(direction, 42, _animationSpeed);
+    
+        // Increment move counter and set solved status of puzzle.
+        let _moveCount = _moveCount + 1;
+        do setSolved();
+
+        return true;
+    }
+
+    /** Sets the 'solved' state of the puzzle. */
+    method void setSolved() {
+        var Tile tile;
+        var int i;
+        
+        let i = 0;
+        while (i < 8) {
+            let tile = _tiles[i];
+            if (~(tile.getNumber() = tile.getPosition())) {
+                let _isSolved = false;
+                return;
+            }
+            let i = i + 1;
+        }
+        let _isSolved = true;
+
+        return;
+    }
+
+    method boolean isSolved() {
+        return _isSolved;
+    }
+
+    method void dispose() {
+        var Tile tile;
+        var int i;
+
+        // Dispose each tile in array
+        let i = 0;
+        while (i < 8) {
+            let tile = _tiles[i];
+            do tile.dispose();
+            let i = i + 1;
+        }
+        do Memory.deAlloc(_tiles);
+        do Memory.deAlloc(_gamePositions);
+        do Memory.deAlloc(this);
+        do SpriteDrawer.dispose();
+
+        return;
+    }
+}

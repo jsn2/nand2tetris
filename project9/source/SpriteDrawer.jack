@@ -1,0 +1,62 @@
+/** Service class for drawing 16x32 pixel sprites on the screen. */
+class SpriteDrawer {
+    static Array leftBitMasks;
+    static Array rightBitMasks;
+
+    function void init() {
+        let leftBitMasks = Array.new(16);
+        let rightBitMasks = Array.new(16);
+
+        let leftBitMasks[0]  = 0;
+        let leftBitMasks[1]  = 1;        let rightBitMasks[1]  = -2;
+        let leftBitMasks[2]  = 3;        let rightBitMasks[2]  = -4;
+        let leftBitMasks[3]  = 7;        let rightBitMasks[3]  = -8;
+        let leftBitMasks[4]  = 15;       let rightBitMasks[4]  = -16;
+        let leftBitMasks[5]  = 31;       let rightBitMasks[5]  = -32;
+        let leftBitMasks[6]  = 63;       let rightBitMasks[6]  = -64;
+        let leftBitMasks[7]  = 127;      let rightBitMasks[7]  = -128;
+        let leftBitMasks[8]  = 255;      let rightBitMasks[8]  = -256;
+        let leftBitMasks[9]  = 511;      let rightBitMasks[9]  = -512;
+        let leftBitMasks[10] = 1023;     let rightBitMasks[10] = -1024;
+        let leftBitMasks[11] = 2047;     let rightBitMasks[11] = -2048;
+        let leftBitMasks[12] = 4095;     let rightBitMasks[12] = -4096;
+        let leftBitMasks[13] = 8191;     let rightBitMasks[13] = -8192;
+        let leftBitMasks[14] = 16383;    let rightBitMasks[14] = -16384;
+        let leftBitMasks[15] = 32767;    let rightBitMasks[15] = ~32767;
+
+        return;
+    }
+
+    /** Draws 16x32 pixel sprite (arr) at (x, y). */
+    function void draw(Array arr, int x, int y) {
+        var int address;
+        var int bitNum;
+        var int i;
+
+        let address = 16384 + ((y * 32) + (x / 16));
+        let bitNum = Maths.mod(x, 16);
+        let i = 0;
+
+        while (i < 32) {
+            // Draw left part of sprite at address.
+            do Memory.poke(address, (Memory.peek(address) & leftBitMasks[bitNum]) | Maths.leftShift(arr[i], bitNum));
+
+            // Draw right part of sprite at address + 1.
+            if (bitNum > 0) {
+                do Memory.poke(address + 1, (Memory.peek(address + 1) & rightBitMasks[bitNum]) | Maths.rightShift(arr[i], 16 - bitNum));
+            }
+
+            let address = address + 32;
+            let i = i + 1;
+        }
+        
+        return;
+    }
+
+    function void dispose() {
+        do leftBitMasks.dispose();
+        do rightBitMasks.dispose();
+
+        return;
+    }
+}

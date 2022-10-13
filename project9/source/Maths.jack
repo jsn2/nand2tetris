@@ -1,0 +1,76 @@
+/** Service class for mathematical operations. */
+class Maths {
+    /** Returns x % n. */
+    function int mod(int x, int n) {
+        var int q;
+        var int p;
+        var int m;
+
+        // Find the quotient
+        let q = x / n;
+
+        // Find the product
+        let p = q * n;
+
+        // Subtract to find the remainder
+        let m = x - p;
+
+        return m;
+    }
+
+    /** Returns an array containing first 16 powers of 2. */
+    function Array getPowerTable() {
+        var Array arr;
+        let arr = Array.new(16);
+
+        let arr[0] = 1;      let arr[8]  = 256;
+        let arr[1] = 2;      let arr[9]  = 512;
+        let arr[2] = 4;      let arr[10] = 1024;
+        let arr[3] = 8;      let arr[11] = 2048;
+        let arr[4] = 16;     let arr[12] = 4096;
+        let arr[5] = 32;     let arr[13] = 8192;
+        let arr[6] = 64;     let arr[14] = 16384;
+        let arr[7] = 128;    let arr[15] = ~32767;
+
+        return arr;
+    }
+
+    /** Returns left logical shift (x << y). */
+    function int leftShift(int x, int y) {
+        var Array arr;
+        let arr = Maths.getPowerTable();
+
+        if (y > 15) {
+            let x = 0;
+        }
+        else {
+            let x = x * arr[y];
+        }
+        do arr.dispose();
+
+        return x;
+    }
+
+    /** Returns right logical shift (x >> y). */
+    function int rightShift(int x, int y) {
+        var Array arr;
+        let arr = Maths.getPowerTable();
+        
+        if (y > 15) {
+            let x = 0;
+        }
+        else {
+            if (x < 0) {
+                let x = x + (~32767);
+                let x = x / arr[y];
+                let x = x + arr[15 - y];
+            }
+            else {
+                let x = x / arr[y];
+            }
+        }
+        do arr.dispose();
+
+        return x;
+    }
+}

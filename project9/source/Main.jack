@@ -1,0 +1,58 @@
+class Main {
+    function void main() {
+        var PuzzleGame game;
+        var boolean moved;
+        var char keyPressed;
+
+        let game = PuzzleGame.new();
+        let moved = false;
+        let keyPressed = 83;
+        
+        do game.displayVerticalDivider(241, 0, true);
+        do game.displayHorizontalDivider(245, 150, true);
+        do game.displayTitle(8, 2);
+        do game.displayInstructions(32, 1);
+        do game.displayControls(32, 15);
+        do game.displayPuzzle(45, 50);
+
+        // while 'Q' is not pressed
+        while (~(keyPressed = 81)) {
+            // If 'S' is pressed
+            if (keyPressed = 83) {
+                do game.shuffle();
+                do game.displayWinMessage(6, 18, false);
+                do game.displayMoves(10, 20);
+            }
+            else {
+                // If the game is not solved and an arrow key is pressed
+                if ( (~(game.isSolved())) & ( (keyPressed = 130) | (keyPressed = 131) | (keyPressed = 132) | (keyPressed = 133) ) ) {
+                    if (keyPressed = 131) {
+                        let moved = game.move(0);
+                    }
+                    if (keyPressed = 133) {
+                        let moved = game.move(1);
+                    }
+                    if (keyPressed = 130) {
+                        let moved = game.move(2);
+                    }
+                    if (keyPressed = 132) {
+                        let moved = game.move(3);
+                    }
+                    if (moved) {
+                        if (game.isSolved()) {
+                            do game.displayWinMessage(6, 18, true);
+                        }
+                        else {
+                            do game.displayMoves(10, 20);
+                        }
+                    }
+                }
+            }
+            let keyPressed = Keyboard.keyPressed();
+        }
+
+        do game.dispose();
+
+        return;
+    }
+}

@@ -1,0 +1,10 @@
+/** Service class for miscellaneous functions. */
+class Utils {
+    /** Print string to screen and then dispose (to avoid memory leak with strings). */
+    function void print(String str) {
+        do Output.printString(str);
+        do str.dispose();
+        
+        return;
+    }
+}

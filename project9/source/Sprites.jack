@@ -1,0 +1,402 @@
+/** Service class which provides 16x32 pixel sprites/bitmaps. */
+class Sprites {
+    function Array getOneLeftHalf() {
+        var Array arr;
+        let arr = Array.new(32);
+
+        // Bit num = 0.
+        let arr[0]   = -1;        let arr[16]  = -32767;
+        let arr[1]   = 1;         let arr[17]  = -32767;
+        let arr[2]   = 1;         let arr[18]  = -32767;
+        let arr[3]   = 1;         let arr[19]  = -32767;
+        let arr[4]   = -32767;    let arr[20]  = -32767;
+        let arr[5]   = -32767;    let arr[21]  = -32767;
+        let arr[6]   = -32767;    let arr[22]  = -32767;
+        let arr[7]   = -32767;    let arr[23]  = -32767;
+        let arr[8]   = -32767;    let arr[24]  = -32767;
+        let arr[9]   = -32767;    let arr[25]  = -32767;
+        let arr[10]  = -32767;    let arr[26]  = -32767;
+        let arr[11]  = -32767;    let arr[27]  = -32767;
+        let arr[12]  = -32767;    let arr[28]  = 1;     
+        let arr[13]  = -32767;    let arr[29]  = 1;     
+        let arr[14]  = -32767;    let arr[30]  = 1;     
+        let arr[15]  = -32767;    let arr[31]  = -1;    
+
+        return arr;
+    }
+
+    function Array getOneRightHalf() {
+        var Array arr;
+        let arr = Array.new(32);
+
+        // Bit num = 0.
+        let arr[0]   = -1;        let arr[16]  = -32767;
+        let arr[1]   = ~32767;    let arr[17]  = -32767;
+        let arr[2]   = ~32767;    let arr[18]  = -32767;
+        let arr[3]   = ~32767;    let arr[19]  = -32767;
+        let arr[4]   = -32767;    let arr[20]  = -32767;
+        let arr[5]   = -32767;    let arr[21]  = -32767;
+        let arr[6]   = -32767;    let arr[22]  = -32767;
+        let arr[7]   = -32767;    let arr[23]  = -32767;
+        let arr[8]   = -32767;    let arr[24]  = -32767;
+        let arr[9]   = -32767;    let arr[25]  = -32767;
+        let arr[10]  = -32767;    let arr[26]  = -32767;
+        let arr[11]  = -32767;    let arr[27]  = -32767;
+        let arr[12]  = -32767;    let arr[28]  = ~32767;
+        let arr[13]  = -32767;    let arr[29]  = ~32767;
+        let arr[14]  = -32767;    let arr[30]  = ~32767;
+        let arr[15]  = -32767;    let arr[31]  = -1;    
+
+        return arr;
+    }
+
+    function Array getTwoLeftHalf() {
+        var Array arr;
+        let arr = Array.new(32);
+
+        // Bit num = 0.
+        let arr[0]   = -1;      let arr[16]  = -511;
+        let arr[1]   = 1;       let arr[17]  = 1537;
+        let arr[2]   = 1;       let arr[18]  = 1537;
+        let arr[3]   = 1;       let arr[19]  = 1537;
+        let arr[4]   = -511;    let arr[20]  = 1537;
+        let arr[5]   = -511;    let arr[21]  = 1537;
+        let arr[6]   = 1;       let arr[22]  = 1537;
+        let arr[7]   = 1;       let arr[23]  = 1537;
+        let arr[8]   = 1;       let arr[24]  = 1537;
+        let arr[9]   = 1;       let arr[25]  = 1537;
+        let arr[10]  = 1;       let arr[26]  = -511;
+        let arr[11]  = 1;       let arr[27]  = -511;
+        let arr[12]  = 1;       let arr[28]  = 1;   
+        let arr[13]  = 1;       let arr[29]  = 1;   
+        let arr[14]  = 1;       let arr[30]  = 1;   
+        let arr[15]  = -511;    let arr[31]  = -1;  
+
+        return arr;
+    }
+
+    function Array getTwoRightHalf() {
+        var Array arr;
+        let arr = Array.new(32);
+
+        // Bit num = 0.
+        let arr[0]   = -1;        let arr[16]  = -32641;
+        let arr[1]   = ~32767;    let arr[17]  = ~32767;
+        let arr[2]   = ~32767;    let arr[18]  = ~32767;
+        let arr[3]   = ~32767;    let arr[19]  = ~32767;
+        let arr[4]   = -32641;    let arr[20]  = ~32767;
+        let arr[5]   = -32641;    let arr[21]  = ~32767;
+        let arr[6]   = -32672;    let arr[22]  = ~32767;
+        let arr[7]   = -32672;    let arr[23]  = ~32767;
+        let arr[8]   = -32672;    let arr[24]  = ~32767;
+        let arr[9]   = -32672;    let arr[25]  = ~32767;
+        let arr[10]  = -32672;    let arr[26]  = -32641;
+        let arr[11]  = -32672;    let arr[27]  = -32641;
+        let arr[12]  = -32672;    let arr[28]  = ~32767;
+        let arr[13]  = -32672;    let arr[29]  = ~32767;
+        let arr[14]  = -32672;    let arr[30]  = ~32767;
+        let arr[15]  = -32641;    let arr[31]  = -1;    
+
+        return arr;
+    }
+
+    function Array getThreeLeftHalf() {
+        var Array arr;
+        let arr = Array.new(32);
+
+        // Bit num = 0.
+        let arr[0]   = -1;      let arr[16]  = -511;
+        let arr[1]   = 1;       let arr[17]  = 1;   
+        let arr[2]   = 1;       let arr[18]  = 1;   
+        let arr[3]   = 1;       let arr[19]  = 1;   
+        let arr[4]   = -511;    let arr[20]  = 1;   
+        let arr[5]   = -511;    let arr[21]  = 1;   
+        let arr[6]   = 1;       let arr[22]  = 1;   
+        let arr[7]   = 1;       let arr[23]  = 1;   
+        let arr[8]   = 1;       let arr[24]  = 1;   
+        let arr[9]   = 1;       let arr[25]  = 1;   
+        let arr[10]  = 1;       let arr[26]  = -511;
+        let arr[11]  = 1;       let arr[27]  = -511;
+        let arr[12]  = 1;       let arr[28]  = 1;   
+        let arr[13]  = 1;       let arr[29]  = 1;   
+        let arr[14]  = 1;       let arr[30]  = 1;   
+        let arr[15]  = -511;    let arr[31]  = -1;  
+
+        return arr;
+    }
+
+    function Array getThreeRightHalf() {
+        var Array arr;
+        let arr = Array.new(32);
+
+        // Bit num = 0.
+        let arr[0]   = -1;        let arr[16]  = -32641;
+        let arr[1]   = ~32767;    let arr[17]  = -32672;
+        let arr[2]   = ~32767;    let arr[18]  = -32672;
+        let arr[3]   = ~32767;    let arr[19]  = -32672;
+        let arr[4]   = -32641;    let arr[20]  = -32672;
+        let arr[5]   = -32641;    let arr[21]  = -32672;
+        let arr[6]   = -32672;    let arr[22]  = -32672;
+        let arr[7]   = -32672;    let arr[23]  = -32672;
+        let arr[8]   = -32672;    let arr[24]  = -32672;
+        let arr[9]   = -32672;    let arr[25]  = -32672;
+        let arr[10]  = -32672;    let arr[26]  = -32641;
+        let arr[11]  = -32672;    let arr[27]  = -32641;
+        let arr[12]  = -32672;    let arr[28]  = ~32767;
+        let arr[13]  = -32672;    let arr[29]  = ~32767;
+        let arr[14]  = -32672;    let arr[30]  = ~32767;
+        let arr[15]  = -32641;    let arr[31]  = -1;    
+
+        return arr;
+    }
+
+    function Array getFourLeftHalf() {
+        var Array arr;
+        let arr = Array.new(32);
+
+        // Bit num = 0.
+        let arr[0]   = -1;      let arr[16]  = -511;
+        let arr[1]   = 1;       let arr[17]  = 1;   
+        let arr[2]   = 1;       let arr[18]  = 1;   
+        let arr[3]   = 1;       let arr[19]  = 1;   
+        let arr[4]   = 1537;    let arr[20]  = 1;   
+        let arr[5]   = 1537;    let arr[21]  = 1;   
+        let arr[6]   = 1537;    let arr[22]  = 1;   
+        let arr[7]   = 1537;    let arr[23]  = 1;   
+        let arr[8]   = 1537;    let arr[24]  = 1;   
+        let arr[9]   = 1537;    let arr[25]  = 1;   
+        let arr[10]  = 1537;    let arr[26]  = 1;   
+        let arr[11]  = 1537;    let arr[27]  = 1;   
+        let arr[12]  = 1537;    let arr[28]  = 1;   
+        let arr[13]  = 1537;    let arr[29]  = 1;   
+        let arr[14]  = 1537;    let arr[30]  = 1;   
+        let arr[15]  = -511;    let arr[31]  = -1;  
+
+        return arr;
+    }
+
+    function Array getFourRightHalf() {
+        var Array arr;
+        let arr = Array.new(32);
+
+        // Bit num = 0.
+        let arr[0]   = -1;        let arr[16]  = -32641;
+        let arr[1]   = ~32767;    let arr[17]  = -32672;
+        let arr[2]   = ~32767;    let arr[18]  = -32672;
+        let arr[3]   = ~32767;    let arr[19]  = -32672;
+        let arr[4]   = -32672;    let arr[20]  = -32672;
+        let arr[5]   = -32672;    let arr[21]  = -32672;
+        let arr[6]   = -32672;    let arr[22]  = -32672;
+        let arr[7]   = -32672;    let arr[23]  = -32672;
+        let arr[8]   = -32672;    let arr[24]  = -32672;
+        let arr[9]   = -32672;    let arr[25]  = -32672;
+        let arr[10]  = -32672;    let arr[26]  = -32672;
+        let arr[11]  = -32672;    let arr[27]  = -32672;
+        let arr[12]  = -32672;    let arr[28]  = ~32767;
+        let arr[13]  = -32672;    let arr[29]  = ~32767;
+        let arr[14]  = -32672;    let arr[30]  = ~32767;
+        let arr[15]  = -32641;    let arr[31]  = -1;    
+
+        return arr;
+    }
+
+    function Array getFiveLeftHalf() {
+        var Array arr;
+        let arr = Array.new(32);
+
+        // Bit num = 0.
+        let arr[0]   = -1;      let arr[16]  = -511;
+        let arr[1]   = 1;       let arr[17]  = 1;   
+        let arr[2]   = 1;       let arr[18]  = 1;   
+        let arr[3]   = 1;       let arr[19]  = 1;   
+        let arr[4]   = -511;    let arr[20]  = 1;   
+        let arr[5]   = -511;    let arr[21]  = 1;   
+        let arr[6]   = 1537;    let arr[22]  = 1;   
+        let arr[7]   = 1537;    let arr[23]  = 1;   
+        let arr[8]   = 1537;    let arr[24]  = 1;   
+        let arr[9]   = 1537;    let arr[25]  = 1;   
+        let arr[10]  = 1537;    let arr[26]  = -511;
+        let arr[11]  = 1537;    let arr[27]  = -511;
+        let arr[12]  = 1537;    let arr[28]  = 1;   
+        let arr[13]  = 1537;    let arr[29]  = 1;   
+        let arr[14]  = 1537;    let arr[30]  = 1;   
+        let arr[15]  = -511;    let arr[31]  = -1;  
+
+        return arr;
+    }
+
+    function Array getFiveRightHalf() {
+        var Array arr;
+        let arr = Array.new(32);
+
+        // Bit num = 0.
+        let arr[0]   = -1;        let arr[16]  = -32641;
+        let arr[1]   = ~32767;    let arr[17]  = -32672;
+        let arr[2]   = ~32767;    let arr[18]  = -32672;
+        let arr[3]   = ~32767;    let arr[19]  = -32672;
+        let arr[4]   = -32641;    let arr[20]  = -32672;
+        let arr[5]   = -32641;    let arr[21]  = -32672;
+        let arr[6]   = ~32767;    let arr[22]  = -32672;
+        let arr[7]   = ~32767;    let arr[23]  = -32672;
+        let arr[8]   = ~32767;    let arr[24]  = -32672;
+        let arr[9]   = ~32767;    let arr[25]  = -32672;
+        let arr[10]  = ~32767;    let arr[26]  = -32641;
+        let arr[11]  = ~32767;    let arr[27]  = -32641;
+        let arr[12]  = ~32767;    let arr[28]  = ~32767;
+        let arr[13]  = ~32767;    let arr[29]  = ~32767;
+        let arr[14]  = ~32767;    let arr[30]  = ~32767;
+        let arr[15]  = -32641;    let arr[31]  = -1;    
+
+        return arr;
+    }
+
+    function Array getSixLeftHalf() {
+        var Array arr;
+        let arr = Array.new(32);
+
+        // Bit num = 0.
+        let arr[0]   = -1;      let arr[16]  = -511;
+        let arr[1]   = 1;       let arr[17]  = 1537;
+        let arr[2]   = 1;       let arr[18]  = 1537;
+        let arr[3]   = 1;       let arr[19]  = 1537;
+        let arr[4]   = -511;    let arr[20]  = 1537;
+        let arr[5]   = -511;    let arr[21]  = 1537;
+        let arr[6]   = 1537;    let arr[22]  = 1537;
+        let arr[7]   = 1537;    let arr[23]  = 1537;
+        let arr[8]   = 1537;    let arr[24]  = 1537;
+        let arr[9]   = 1537;    let arr[25]  = 1537;
+        let arr[10]  = 1537;    let arr[26]  = -511;
+        let arr[11]  = 1537;    let arr[27]  = -511;
+        let arr[12]  = 1537;    let arr[28]  = 1;   
+        let arr[13]  = 1537;    let arr[29]  = 1;   
+        let arr[14]  = 1537;    let arr[30]  = 1;   
+        let arr[15]  = -511;    let arr[31]  = -1;  
+
+        return arr;
+    }
+
+    function Array getSixRightHalf() {
+        var Array arr;
+        let arr = Array.new(32);
+
+        // Bit num = 0.
+        let arr[0]   = -1;        let arr[16]  = -32641;
+        let arr[1]   = ~32767;    let arr[17]  = -32672;
+        let arr[2]   = ~32767;    let arr[18]  = -32672;
+        let arr[3]   = ~32767;    let arr[19]  = -32672;
+        let arr[4]   = -32641;    let arr[20]  = -32672;
+        let arr[5]   = -32641;    let arr[21]  = -32672;
+        let arr[6]   = ~32767;    let arr[22]  = -32672;
+        let arr[7]   = ~32767;    let arr[23]  = -32672;
+        let arr[8]   = ~32767;    let arr[24]  = -32672;
+        let arr[9]   = ~32767;    let arr[25]  = -32672;
+        let arr[10]  = ~32767;    let arr[26]  = -32641;
+        let arr[11]  = ~32767;    let arr[27]  = -32641;
+        let arr[12]  = ~32767;    let arr[28]  = ~32767;
+        let arr[13]  = ~32767;    let arr[29]  = ~32767;
+        let arr[14]  = ~32767;    let arr[30]  = ~32767;
+        let arr[15]  = -32641;    let arr[31]  = -1;    
+
+        return arr;
+    }
+
+    function Array getSevenLeftHalf() {
+        var Array arr;
+        let arr = Array.new(32);
+
+        // Bit num = 0.
+        let arr[0]   = -1;      let arr[16]  = 1; 
+        let arr[1]   = 1;       let arr[17]  = 1; 
+        let arr[2]   = 1;       let arr[18]  = 1; 
+        let arr[3]   = 1;       let arr[19]  = 1; 
+        let arr[4]   = -511;    let arr[20]  = 1; 
+        let arr[5]   = -511;    let arr[21]  = 1; 
+        let arr[6]   = 1;       let arr[22]  = 1; 
+        let arr[7]   = 1;       let arr[23]  = 1; 
+        let arr[8]   = 1;       let arr[24]  = 1; 
+        let arr[9]   = 1;       let arr[25]  = 1; 
+        let arr[10]  = 1;       let arr[26]  = 1; 
+        let arr[11]  = 1;       let arr[27]  = 1; 
+        let arr[12]  = 1;       let arr[28]  = 1; 
+        let arr[13]  = 1;       let arr[29]  = 1; 
+        let arr[14]  = 1;       let arr[30]  = 1; 
+        let arr[15]  = 1;       let arr[31]  = -1;
+
+        return arr;
+    }
+
+    function Array getSevenRightHalf() {
+        var Array arr;
+        let arr = Array.new(32);
+
+        // Bit num = 0.
+        let arr[0]   = -1;        let arr[16]  = -32672;
+        let arr[1]   = ~32767;    let arr[17]  = -32672;
+        let arr[2]   = ~32767;    let arr[18]  = -32672;
+        let arr[3]   = ~32767;    let arr[19]  = -32672;
+        let arr[4]   = -32641;    let arr[20]  = -32672;
+        let arr[5]   = -32641;    let arr[21]  = -32672;
+        let arr[6]   = -32672;    let arr[22]  = -32672;
+        let arr[7]   = -32672;    let arr[23]  = -32672;
+        let arr[8]   = -32672;    let arr[24]  = -32672;
+        let arr[9]   = -32672;    let arr[25]  = -32672;
+        let arr[10]  = -32672;    let arr[26]  = -32672;
+        let arr[11]  = -32672;    let arr[27]  = -32672;
+        let arr[12]  = -32672;    let arr[28]  = ~32767;
+        let arr[13]  = -32672;    let arr[29]  = ~32767;
+        let arr[14]  = -32672;    let arr[30]  = ~32767;
+        let arr[15]  = -32672;    let arr[31]  = -1;    
+
+        return arr;
+    }
+
+    function Array getEightLeftHalf() {
+        var Array arr;
+        let arr = Array.new(32);
+
+        // Bit num = 0.
+        let arr[0]   = -1;      let arr[16]  = -511;
+        let arr[1]   = 1;       let arr[17]  = 1537;
+        let arr[2]   = 1;       let arr[18]  = 1537;
+        let arr[3]   = 1;       let arr[19]  = 1537;
+        let arr[4]   = -511;    let arr[20]  = 1537;
+        let arr[5]   = -511;    let arr[21]  = 1537;
+        let arr[6]   = 1537;    let arr[22]  = 1537;
+        let arr[7]   = 1537;    let arr[23]  = 1537;
+        let arr[8]   = 1537;    let arr[24]  = 1537;
+        let arr[9]   = 1537;    let arr[25]  = 1537;
+        let arr[10]  = 1537;    let arr[26]  = -511;
+        let arr[11]  = 1537;    let arr[27]  = -511;
+        let arr[12]  = 1537;    let arr[28]  = 1;   
+        let arr[13]  = 1537;    let arr[29]  = 1;   
+        let arr[14]  = 1537;    let arr[30]  = 1;   
+        let arr[15]  = -511;    let arr[31]  = -1;  
+
+        return arr;
+    }
+
+    function Array getEightRightHalf() {
+        var Array arr;
+        let arr = Array.new(32);
+
+        // Bit num = 0.
+        let arr[0]   = -1;        let arr[16]  = -32641;
+        let arr[1]   = ~32767;    let arr[17]  = -32672;
+        let arr[2]   = ~32767;    let arr[18]  = -32672;
+        let arr[3]   = ~32767;    let arr[19]  = -32672;
+        let arr[4]   = -32641;    let arr[20]  = -32672;
+        let arr[5]   = -32641;    let arr[21]  = -32672;
+        let arr[6]   = -32672;    let arr[22]  = -32672;
+        let arr[7]   = -32672;    let arr[23]  = -32672;
+        let arr[8]   = -32672;    let arr[24]  = -32672;
+        let arr[9]   = -32672;    let arr[25]  = -32672;
+        let arr[10]  = -32672;    let arr[26]  = -32641;
+        let arr[11]  = -32672;    let arr[27]  = -32641;
+        let arr[12]  = -32672;    let arr[28]  = ~32767;
+        let arr[13]  = -32672;    let arr[29]  = ~32767;
+        let arr[14]  = -32672;    let arr[30]  = ~32767;
+        let arr[15]  = -32641;    let arr[31]  = -1;    
+
+        return arr;
+    }
+}
