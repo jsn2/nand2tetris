@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+	table {
+		float: left;
+	}
+	td {
+		border: 1px solid black;
+		width: 10px;
+		height: 10px;
+		font-size: 9px;
+		text-align: center;
+		user-select: none;
+		-moz-user-select: none;
+	}
+	textarea {
+		height: 500px;
+		width: 75px;
+	}
+	button {
+		width: 150px;
+		margin-top: 5px;
+		margin-left: 5px;
+	}
+	.bgColour {
+		background-color: #000;
+	}
+	label {
+		font-size: 12px;
+	}
+	.main_label {
+		margin-left: 4px;
+	}
+	#div_move_controls {
+		margin-top: 4px;
+	}
+	#textarea_7, #textarea_8, #textarea_9, #textarea_10 {
+		height: 300px;
+	}
+	#textarea_7, #textarea_9 {
+		width: 430px;
+	}
+	#textarea_8, #textarea_10 {
+		width: 770px;
+	}
+</style>
+<script>
+	/** Converts value to 16 bit two's complement equivalent */
+	function twosComplement(val) {
+		const mask1 = 65535, mask2 = 32768;
+		let result = val & mask1;
+
+		return result & mask2 ? result - 65536 : result;
+	}
+
+	function onMouseDown(event) {
+		let element = event.srcElement;
+
+		grid.mouseDown = true;
+		grid.isColoured = !element.classList.contains("bgColour");
+		grid.isColoured ? element.classList.add("bgColour") : element.classList.remove("bgColour");
+	}
+
+	function onMouseEnter(event) {
+		if (grid.mouseDown)
+		grid.isColoured ? event.srcElement.classList.add("bgColour") : event.srcElement.classList.remove("bgColour");
+	}
+
+	function onMouseUp() {
+		grid.mouseDown = false;
+	}
+
+	function go(event) {
+		let rows = document.getElementsByTagName("table")[0].children[0].children;
+
+		// Get direction to move the sprite
+		for (const element of document.querySelectorAll('input[type="radio"]'))
+			if (element.checked) moveControls.direction = element.value;
+
+		// Get distance to move the sprite
+		moveControls.distance = Number(document.getElementById("move_distance").value);
+
+		// Loop through all rows except first two and translate
+		for (let i = 2; i < rows.length; i++) {
+			resultSet[0][i - 2] = translateRow(rows[i], 1);
+			resultSet[1][i - 2] = translateRow(rows[i], 17);
+		}
+
+		{
+			// Convert unsigned values to signed and display on text areas
+			let twosComp = function(x) {
+				let result = twosComplement(x);
+				return result === -32768 ? "~32767" : result.toString();
+			};
+
+			// Shift arr as per direction and distance. Return new array for either left or right sprite (leftSprite)
+			let shift = function(arr, direction, distance, leftSprite) {
+				if (direction === "left")
+					return leftSprite ? shiftLeft(arr, 16 - distance) : shiftRight(arr, distance);
+				else 
+					return leftSprite ? shiftLeft(arr, distance) : shiftRight(arr, 16 - distance);
+			};
+
+			// Functions for formatting the sprite values
+			let formatter = {
+				prepare: (function(arr, index) {
+					let result = [];
+					let maxLength = 0;
+
+					for (let i = 0; i < arr.length; i++, index++) {
+						result.push(`    let arr[${index}] ${index < 10 ? '  =' : index < 100 ? ' =' : '='} ${arr[i]};`);
+						maxLength = result[i].length > maxLength ? result[i].length : maxLength;
+					}
+
+					for (let i = 0; i < arr.length; i++) {
+						while (result[i].length < maxLength)
+							result[i] += ' ';
+					}
+
+					return result;
+				}),
+				join: (function(arr1, arr2, arr3, arr4) {
+					let result = [];
+					for (let i = 0; i < 16; i++) {
+						result.push('    ' + arr1[i] + arr2[i] + (arr3 ? arr3[i] : '') + (arr4 ? arr4[i] : ''));
+					}
+					return result.join('\n');
+				})
+			};
+
+			// First sprite
+			let left = Array.from(resultSet[0], twosComp);
+			let leftLeft = Array.from(shift(resultSet[0], moveControls.direction, moveControls.distance, true), twosComp);
+			let leftRight = Array.from(shift(resultSet[0], moveControls.direction, moveControls.distance, false), twosComp);
+
+			// Second sprite
+			let right = Array.from(resultSet[1], twosComp);
+			let rightLeft = Array.from(shift(resultSet[1], moveControls.direction, moveControls.distance, true), twosComp);
+			let rightRight = Array.from(shift(resultSet[1], moveControls.direction, moveControls.distance, false), twosComp);
+			
+			// Format values (first sprite)
+			let index = moveControls.distance * 64 - 32;
+			
+			let left1 = formatter.prepare(left.slice(0, 16), 0);
+			let left2 = formatter.prepare(left.slice(16, 32), 16);
+			let leftLeft1 = formatter.prepare(leftLeft.slice(0, 16), index);
+			let leftLeft2 = formatter.prepare(leftLeft.slice(16, 32), index + 16);
+			let leftRight1 = formatter.prepare(leftRight.slice(0, 16), index + 32);
+			let leftRight2 = formatter.prepare(leftRight.slice(16, 32), index + 48);
+
+			// Format values (second sprite)
+			let right1 = formatter.prepare(right.slice(0, 16), 0);
+			let right2 = formatter.prepare(right.slice(16, 32), 16);
+			let rightLeft1 = formatter.prepare(rightLeft.slice(0, 16), index);
+			let rightLeft2 = formatter.prepare(rightLeft.slice(16, 32), index + 16);
+			let rightRight1 = formatter.prepare(rightRight.slice(0, 16), index + 32);
+			let rightRight2 = formatter.prepare(rightRight.slice(16, 32), index + 48);
+			
+			// Update textareas
+			document.getElementById("textarea_1").value = Array.from(resultSet[0], twosComp).join("\n");
+			document.getElementById("textarea_2").value = Array.from(shift(resultSet[0], moveControls.direction, moveControls.distance, true), twosComp).join("\n");
+			document.getElementById("textarea_3").value = Array.from(shift(resultSet[0], moveControls.direction, moveControls.distance, false), twosComp).join("\n");
+
+			document.getElementById("textarea_4").value = Array.from(resultSet[1], twosComp).join("\n");
+			document.getElementById("textarea_5").value = Array.from(shift(resultSet[1], moveControls.direction, moveControls.distance, true), twosComp).join("\n");
+			document.getElementById("textarea_6").value = Array.from(shift(resultSet[1], moveControls.direction, moveControls.distance, false), twosComp).join("\n");
+		
+			document.getElementById("textarea_7").value = formatter.join(left1, left2, null, null);
+			document.getElementById("textarea_9").value = formatter.join(right1, right2, null, null);
+			document.getElementById("textarea_8").value = formatter.join(leftLeft1, leftLeft2, leftRight1, leftRight2);
+			document.getElementById("textarea_10").value = formatter.join(rightLeft1, rightLeft2, rightRight1, rightRight2);
+		}
+	}
+
+	/** Resets the grid */
+	function reset() {
+		// Reset grid
+		// Loop through all rows except first two
+		let rows = document.getElementsByTagName("table")[0].children[0].children;
+		for (let i = 2; i < rows.length; i++) {
+			// Loop through all columns except first one
+			let columns = rows[i].children;
+			for (let j = 1; j < columns.length; j++) {
+				if (columns[j].classList.contains("bgColour"))
+					columns[j].classList.remove("bgColour");
+			}
+		}
+
+		// Reset textareas
+		document.getElementById("textarea_1").value = "";
+		document.getElementById("textarea_2").value = "";
+		document.getElementById("textarea_3").value = "";
+		document.getElementById("textarea_4").value = "";
+		document.getElementById("textarea_5").value = "";
+		document.getElementById("textarea_6").value = "";
+		document.getElementById("textarea_7").value = "";
+		document.getElementById("textarea_8").value = "";
+		document.getElementById("textarea_9").value = "";
+		document.getElementById("textarea_10").value = "";
+	}
+
+	/** 16-bit right shift */
+	function shiftRight(arr, n) {
+		let result = [];
+
+		for (let i = 0; i < arr.length; i++) 
+			result.push(arr[i] >>> n);
+		
+		return result;
+	}
+
+	/** 16-bit left shift */
+	function shiftLeft(arr, n) {
+		const mask = 65535;
+		let result = [];
+
+		for (let i = 0; i < arr.length; i++)
+			result.push((arr[i] << n) & mask);
+		
+		return result;
+	}
+
+	/** Returns the unsigned value to be written to memory in order to reproduce the bit pattern (from the row) on the screen
+	 *  row:    tr element
+	 *  offset: number of td elements to skip
+	*/
+	function translateRow(row, offset = 0) {
+		let columns = row.children;
+		let result = 0;
+
+		// Loop through columns (skip offset) and add
+		for (let i = offset; i < 16 + offset; i++) {
+			if (columns[i].classList.contains("bgColour"))
+				result += constants.PowersOfTwo[i - offset];
+		}
+		
+		return result;
+	}
+
+	(function(window) {
+		let grid = { mouseDown: false, isColoured: false, block: false };
+		let constants = { PowersOfTwo: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768] };
+		let resultSet = [ [], [] ];
+		let moveControls = { direction: "left", distance: 1 };
+
+		window.grid = grid;
+		window.constants = constants;
+		window.resultSet = resultSet;
+		window.moveControls = moveControls;
+
+		window.onload = () => {
+			// Add event listeners
+			// Loop through all rows except first two
+			let rows = document.getElementsByTagName("table")[0].children[0].children;
+			for (let i = 2; i < rows.length; i++) {
+				// Loop through all columns except first one
+				let columns = rows[i].children;
+				for (let j = 1; j < columns.length; j++) {
+					columns[j].addEventListener("mousedown", onMouseDown);
+					columns[j].addEventListener("mouseenter", onMouseEnter);
+				}
+			}
+			document.getElementById('button_go').addEventListener("click", go);
+			document.getElementById('button_clear').addEventListener("click", reset);
+			window.addEventListener("mouseup", onMouseUp);
+		}
+	})(window);
+</script>
+</head>
+<body>
+<table>
+<tr><td></td><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td></tr>
+<tr><td></td><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td><td>30</td><td>31</td></tr>
+<tr><td>0</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>1</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>2</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>3</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>4</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>5</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>6</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>7</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>8</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>9</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>10</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>11</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>12</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>13</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>14</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>15</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>16</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>17</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>18</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>19</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>20</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>21</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>22</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>23</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>24</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>25</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>26</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>27</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>28</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>29</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>30</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>31</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</table>
+<textarea id="textarea_1"></textarea>
+<textarea id="textarea_2"></textarea>
+<textarea id="textarea_3"></textarea>
+<textarea id="textarea_4"></textarea>
+<textarea id="textarea_5"></textarea>
+<textarea id="textarea_6"></textarea>
+<br>
+<div id="div_move_controls">
+	<label class="main_label">Move:</label>
+	<input id="radio_left" type="radio" name="move_direction" value="left" checked>
+	<label for="radio_left">Left</label>
+	<input id="radio_right" type="radio" name="move_direction" value="right">
+	<label for="radio_right">Right</label>
+	<br>
+
+	<label class="main_label" for="move_distance">Distance:</label>
+	<select id="move_distance">
+		<option value="1">1</option>
+		<option value="2">2</option>
+		<option value="3">3</option>
+		<option value="4">4</option>
+		<option value="5">5</option>
+		<option value="6">6</option>
+		<option value="7">7</option>
+		<option value="8">8</option>
+		<option value="9">9</option>
+		<option value="10">10</option>
+		<option value="11">11</option>
+		<option value="12">12</option>
+		<option value="13">13</option>
+		<option value="14">14</option>
+		<option value="15">15</option>
+	</select>
+</div>
+<br>
+<button id="button_go" type="button">Go</button>
+<button id="button_clear" type="button">Clear</button>
+<br><br>
+<textarea id="textarea_7"></textarea>
+<textarea id="textarea_8"></textarea>
+<br>
+<textarea id="textarea_9"></textarea>
+<textarea id="textarea_10"></textarea>
+</body>
+</html>
