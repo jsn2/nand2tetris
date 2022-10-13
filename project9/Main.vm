@@ -1,0 +1,172 @@
+function Main.main 3
+call PuzzleGame.new 0
+pop local 0
+push constant 0
+pop local 1
+push constant 83
+pop local 2
+push local 0
+push constant 241
+push constant 0
+push constant 0
+not
+call PuzzleGame.displayVerticalDivider 4
+pop temp 0
+push local 0
+push constant 245
+push constant 150
+push constant 0
+not
+call PuzzleGame.displayHorizontalDivider 4
+pop temp 0
+push local 0
+push constant 8
+push constant 2
+call PuzzleGame.displayTitle 3
+pop temp 0
+push local 0
+push constant 32
+push constant 1
+call PuzzleGame.displayInstructions 3
+pop temp 0
+push local 0
+push constant 32
+push constant 15
+call PuzzleGame.displayControls 3
+pop temp 0
+push local 0
+push constant 45
+push constant 50
+call PuzzleGame.displayPuzzle 3
+pop temp 0
+label WHILE_EXP0
+push local 2
+push constant 81
+eq
+not
+not
+if-goto WHILE_END0
+push local 2
+push constant 83
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 0
+call PuzzleGame.shuffle 1
+pop temp 0
+push local 0
+push constant 6
+push constant 18
+push constant 0
+call PuzzleGame.displayWinMessage 4
+pop temp 0
+push local 0
+push constant 10
+push constant 20
+call PuzzleGame.displayMoves 3
+pop temp 0
+goto IF_END0
+label IF_FALSE0
+push local 0
+call PuzzleGame.isSolved 1
+not
+push local 2
+push constant 130
+eq
+push local 2
+push constant 131
+eq
+or
+push local 2
+push constant 132
+eq
+or
+push local 2
+push constant 133
+eq
+or
+and
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push local 2
+push constant 131
+eq
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push local 0
+push constant 0
+call PuzzleGame.move 2
+pop local 1
+label IF_FALSE2
+push local 2
+push constant 133
+eq
+if-goto IF_TRUE3
+goto IF_FALSE3
+label IF_TRUE3
+push local 0
+push constant 1
+call PuzzleGame.move 2
+pop local 1
+label IF_FALSE3
+push local 2
+push constant 130
+eq
+if-goto IF_TRUE4
+goto IF_FALSE4
+label IF_TRUE4
+push local 0
+push constant 2
+call PuzzleGame.move 2
+pop local 1
+label IF_FALSE4
+push local 2
+push constant 132
+eq
+if-goto IF_TRUE5
+goto IF_FALSE5
+label IF_TRUE5
+push local 0
+push constant 3
+call PuzzleGame.move 2
+pop local 1
+label IF_FALSE5
+push local 1
+if-goto IF_TRUE6
+goto IF_FALSE6
+label IF_TRUE6
+push local 0
+call PuzzleGame.isSolved 1
+if-goto IF_TRUE7
+goto IF_FALSE7
+label IF_TRUE7
+push local 0
+push constant 6
+push constant 18
+push constant 0
+not
+call PuzzleGame.displayWinMessage 4
+pop temp 0
+goto IF_END7
+label IF_FALSE7
+push local 0
+push constant 10
+push constant 20
+call PuzzleGame.displayMoves 3
+pop temp 0
+label IF_END7
+label IF_FALSE6
+label IF_FALSE1
+label IF_END0
+call Keyboard.keyPressed 0
+pop local 2
+goto WHILE_EXP0
+label WHILE_END0
+push local 0
+call PuzzleGame.dispose 1
+pop temp 0
+push constant 0
+return
